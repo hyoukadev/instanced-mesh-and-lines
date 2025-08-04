@@ -9,6 +9,7 @@ import {
   Mesh,
   Object3D,
   Raycaster,
+  ShaderLib,
   Sphere,
   Vector3,
   Vector4
@@ -16,6 +17,41 @@ import {
 import { LineMaterial, LineSegmentsGeometry } from 'three/examples/jsm/Addons.js';
 
 import { InstancedMesh2, InstancedMesh2Params } from '../../src/index.js';
+
+console.log(ShaderLib.dashed.vertexShader)
+
+ShaderLib.line.vertexShader = ((shader) => {
+  // https://github.com/mrdoob/three.js/blob/1bac6346777cd45e1d4ab5071f9527c86be62b81/src/renderers/shaders/ShaderLib/linedashed.glsl.js#L7
+
+  // https://github.com/mrdoob/three.js/blob/1bac6346777cd45e1d4ab5071f9527c86be62b81/src/renderers/shaders/ShaderLib/meshbasic.glsl.js#L3
+
+  // https://github.com/agargaro/instanced-mesh/blob/02ada425e400d59722ce53c8a175756dc7f2bacf/src/shaders/ShaderChunk.ts#L26
+
+  return (
+    shader
+      .replace(
+        '#include <common>',
+        '#include <common>\n#include <batching_pars_vertex>\n#include <uv_pars_vertex>'
+      )
+
+    // https://github.com/mrdoob/three.js/blob/1bac6346777cd45e1d4ab5071f9527c86be62b81/src/renderers/shaders/ShaderLib/meshbasic.glsl.js#L19
+
+    // https://github.com/mrdoob/three.js/blob/1bac6346777cd45e1d4ab5071f9527c86be62b81/src/renderers/shaders/ShaderLib/linedashed.glsl.js#L22
+
+    // https://github.com/agargaro/instanced-mesh/blob/02ada425e400d59722ce53c8a175756dc7f2bacf/src/shaders/ShaderChunk.ts#L28
+
+      .replace(
+        '#include <morphcolor_vertex>',
+        '#include <morphcolor_vertex>\n#include <batching_vertex>'
+      )
+      .replace(
+        '#include <logdepthbuf_vertex>',
+        'mvPosition = instanceMatrix * mvPosition;\n#include <logdepthbuf_vertex>'
+      )
+  );
+})(ShaderLib.line.vertexShader);
+
+console.log(ShaderLib.line.vertexShader)
 
 const _viewport = new Vector4();
 

@@ -10,6 +10,8 @@ main.createView({ scene, camera });
 const controls = new OrbitControls(camera, main.renderer.domElement);
 controls.update();
 
+window.scene = scene
+
 const basic = new InstancedLineSegments(
   new EdgesGeometry(new BoxGeometry()),
   new LineBasicMaterial({ color: 'red' })
@@ -23,6 +25,12 @@ dashed.computeLineDistances();
 scene.add(basic, dashed);
 
 basic.addInstances(9, (obj, index) => {
+  obj.position.randomDirection().multiplyScalar(Math.random() * 5);
+});
+
+basic.removeInstances(1,2,3,4,5,6)
+
+basic.addInstances(3, (obj, index) => {
   obj.position.randomDirection().multiplyScalar(Math.random() * 5);
 });
 
